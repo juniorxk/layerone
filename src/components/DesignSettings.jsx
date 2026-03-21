@@ -21,11 +21,10 @@ export default function DesignSettings({ data, updateData }) {
               onChange={handleChange}
               className="w-full px-3 py-2 bg-white border border-slate-200 rounded-md text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 appearance-none cursor-pointer"
             >
-              <option value="Minimalist">Minimalist</option>
-              <option value="A-Luxury">A - Luxury Cinematic</option>
-              <option value="B-Corporate">B - Corporate Trust</option>
-              <option value="C-Playful">C - Playful Modern</option>
-              <option value="D-Tech">D - Dark Tech</option>
+              <option value="Preset A — Organic Authority">Preset A — Organic Authority (Trust + Warmth)</option>
+              <option value="Preset B — Dark Premium">Preset B — Dark Premium (Luxury + Power)</option>
+              <option value="Preset C — Tech Edge">Preset C — Tech Edge (Modern SaaS)</option>
+              <option value="Preset D — Editorial Impact">Preset D — Editorial Impact (Story + Brand)</option>
             </select>
           </div>
           <div>

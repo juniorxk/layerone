@@ -15,6 +15,7 @@ const initialState = {
   // Value & Positioning
   benefits: ["", "", ""],
   differentiation: "",
+  howItWorks: "",
   tone: "",
   // Offer
   products: "",
@@ -25,7 +26,7 @@ const initialState = {
   // Page Builder
   pages: { landing: true, about: false, services: false, contact: false, blog: false, pricing: false, faq: false, custom: "" },
   // Design Config
-  aestheticPreset: "Minimalist", // Minimalist, Dark Cinematic, Playful, Corporate
+  aestheticPreset: "Preset A — Organic Authority", // Custom presets
   styleIntensity: "Balanced", // Minimal, Balanced, High-impact
   // Advanced Controls
   seoKeywords: "",

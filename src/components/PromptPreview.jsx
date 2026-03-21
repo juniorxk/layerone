@@ -12,73 +12,175 @@ export default function PromptPreview({ data, liveUpdate }) {
       .map(([key, val]) => key === 'custom' ? val : key);
 
     return `
-# INSTRUCTION: WordPress Theme Generation via LayerOne
+# 🚀 WordPress Cinematic Landing Page Generator
 
-You are an expert Frontend Engineer and WordPress Theme Developer.
-Your task is to generate a complete, production-ready WordPress theme based on the structured specifications below. 
-Do not ignore any of these parameters. Optimize for speed, modern aesthetics, and exact layout specifications.
+**Role**
+Act as a World-Class Creative Technologist, Conversion Designer, and WordPress Theme Architect.
 
----
+You create premium, cinematic, high-conversion landing pages as fully functional WordPress themes, packaged for direct upload.
 
-## 1. Context Block
-- **Brand Definition**: ${data.brandName || '[Not provided]'}
-- **One-line Purpose**: ${data.purpose || '[Not provided]'}
-- **Industry Context**: ${data.industry || '[Not provided]'}
-- **Target Audience**: ${data.targetAudience || '[Not provided]'}
+Every output must feel like a designed digital product, not a template:
+- Intentional scroll
+- Strong visual identity
+- High-end interactions
+- Zero generic AI patterns
 
----
-
-## 2. Design Instructions
-- **Aesthetic Preset**: ${data.aestheticPreset}
-- **Style Intensity**: ${data.styleIntensity}
-- **Brand Tone**: ${data.tone || 'Professional yet accessible'}
+You are not designing pages. You are building deployable assets that can be used to launch businesses at scale.
 
 ---
 
-## 3. Page Requirements
-You must generate the following pages. Use appropriate routing/template structure:
-- Landing Page (Home) — REQUIRED
-${selectedPagesArray.filter(p => p !== 'landing').map(p => `- ${p.charAt(0).toUpperCase() + p.slice(1)} Page`).join('\n')}
+## ⚙️ Core Objective
+
+Generate a complete WordPress theme (zip-ready structure) that:
+- Can be uploaded via WordPress → Appearance → Themes
+- Works immediately (no setup required)
+- Includes animations, styles, and layout fully implemented
+- Is optimized for conversion, SEO, and performance
 
 ---
 
-## 4. Content Inputs (Inject strictly into structure)
-**Value Proposition / Core Benefits:**
-${data.benefits.filter(Boolean).map(b => `- ${b}`).join('\n') || '- [Awaiting benefits]'}
+## 🧠 Step 1 — Context Inputs
 
-**Differentiation Factor:**
-> ${data.differentiation || '[Not provided]'}
+1. **Brand name + purpose**: ${data.brandName || '[Not provided]'} — ${data.purpose || '[Not provided]'}
+2. **Target audience**: ${data.targetAudience || '[Not provided]'}
+3. **Primary goal (conversion)**: ${data.primaryCTA || 'Get Started'}
+4. **3 Core benefits**:
+${data.benefits.filter(Boolean).map(b => `   - ${b}`).join('\n') || '   - [Awaiting benefits]'}
+5. **How it Works**: 
+   ${data.howItWorks || '[Not provided]'}
+6. **Aesthetic preset**: ${data.aestheticPreset}
+7. **Additional pages needed**: 
+${selectedPagesArray.filter(p => p !== 'landing').map(p => `   - ${p.charAt(0).toUpperCase() + p.slice(1)} Page`).join('\n') || '   - [None]'}
+8. **Language of the content**: ${data.language || 'English'}
 
-**Services / Products:**
-${data.products || '[Not provided]'}
-
-**Pricing & Offers:**
-${data.pricing || '[Not provided]'}
-
-**Conversion Architecture:**
-- Primary CTA: "${data.primaryCTA || 'Get Started'}"
-- Secondary CTA: "${data.secondaryCTA || 'Learn More'}"
-
----
-
-## 5. Advanced Variables
-- **SEO Keywords**: ${data.seoKeywords || '[None specified]'}
-- **Local SEO Target**: ${data.location || '[None specified]'}
-- **Language**: ${data.language || 'English'}
-- **Auto-Generate Blog Architecture**: ${data.enableBlogAuto ? 'YES' : 'NO'}
-
----
-
-## 6. Technical Requirements
-1. **Output Format**: Generate a functional WordPress theme package (or strictly valid React/HTML components if acting as an intermediate layer), using Tailwind CSS for styling.
-2. **Animations**: Integrate subtle entrance animations (e.g., GSAP or Tailwind animations) fitting the "${data.styleIntensity}" intensity level.
-3. **Structure**: File architecture must be clear. Ensure all components are modular and well documented.
-4. **Responsive**: Mobile-first approach strictly required.
+*(Additional Business Context)*
+- Industry: ${data.industry || '[Not provided]'}
+- Differentiation: ${data.differentiation || '[Not provided]'}
+- Services/Products: ${data.products || '[Not provided]'}
+- Pricing: ${data.pricing || '[Not provided]'}
+- Tone of Voice: ${data.tone || 'Professional yet accessible'}
+- Style Intensity: ${data.styleIntensity}
+- SEO Keywords: ${data.seoKeywords || '[None specified]'}
+- Local SEO Target: ${data.location || '[None specified]'}
+- Auto-Generate Blog Architecture: ${data.enableBlogAuto ? 'YES' : 'NO'}
 
 ---
 
-## 7. Final Directive
-Begin execution immediately. Provide the complete code blocks and instructions for deployment. Do not skip components.
+## 🎨 Aesthetic Presets (MANDATORY)
+
+Each preset defines a complete design system.
+
+**Preset A — Organic Authority (Trust + Warmth)**
+- Palette: Deep Green #1F3D2B, Soft Beige #F5F2EB, Accent #D97706
+- Typography: Headings "Plus Jakarta Sans", Accent "Cormorant Garamond Italic"
+- Image Mood: Natural light, people, calm environments
+- Motion Style: Soft, smooth, confident
+
+**Preset B — Dark Premium (Luxury + Power)**
+- Palette: Black #0B0B0F, Gold #C9A84C, Off-white #F5F5F5
+- Typography: Headings "Inter", Accent "Playfair Display Italic"
+- Image Mood: Architecture, shadows, luxury materials
+- Motion Style: Smooth, delayed, cinematic
+
+**Preset C — Tech Edge (Modern SaaS)**
+- Palette: Blue #2563EB, Light Gray #F8FAFC, Dark #0F172A
+- Typography: Headings "Sora", Mono "JetBrains Mono"
+- Image Mood: Abstract tech, UI visuals, data patterns
+- Motion Style: Fast, responsive, precise
+
+**Preset D — Editorial Impact (Story + Brand)**
+- Palette: Off-white #FAF7F2, Black #111111, Accent #E11D48
+- Typography: Headings "DM Serif Display", Body "Inter"
+- Image Mood: Photography-driven, magazine style
+- Motion Style: Dramatic, typography-led
+
+---
+
+## 🎨 Design System (NON-NEGOTIABLE)
+
+**Visual Quality**
+- No flat UI, no generic SaaS sections, no basic layouts
+- Must include: Depth (shadows, blur, overlays), Large typography contrast, Strong spacing system
+
+**Signature Elements**
+- Noise Texture: Global subtle grain overlay (opacity 0.03–0.06)
+- Rounded System: 24px–48px radius, No sharp edges
+- Magnetic Buttons: Slight scale on hover, Smooth cubic-bezier easing
+- Motion: All sections animated, No static blocks
+
+---
+
+## 🧩 Page Architecture (MANDATORY)
+
+1. **Navbar**: Floating, Transparent → blur on scroll, CTA highlighted
+2. **Hero (Full Screen)**: 100vh, Strong headline split in 2 visual weights, Background image (Unsplash), Gradient overlay, CTA visible immediately
+3. **Value Section (3 Interactive Blocks)**: Animated card (content swap) + Typing/live feed effect + Visual interaction. Must feel like product experience.
+4. **Differentiation Section**: Contrast messaging ("Most companies do X", "We do Y"). Bold and visually dominant.
+5. **Process Section (3 Steps)**: Scroll-based interaction OR stacking effect. Each step visually distinct.
+6. **How It Works (MANDATORY)**: 3-step horizontal (desktop) / vertical (mobile). Step number (01, 02, 03 — monospace style), short title, 1–2 line explanation, visual or animated element.
+7. **CTA Section**: Focused conversion block, minimal distractions.
+8. **Footer**: Brand, Links.
+
+---
+
+## ⚙️ WordPress Technical Requirements
+
+**Theme Structure (REQUIRED)**
+theme-name/
+├── style.css
+├── functions.php
+├── header.php
+├── footer.php
+├── front-page.php
+├── index.php
+├── page.php
+├── single.php
+├── assets/
+│   ├── css/
+│   ├── js/
+│   └── images/
+
+**File Rules:**
+- \`style.css\`: Theme metadata at top.
+- \`functions.php\`: Enqueue styles, GSAP + ScrollTrigger, main JS file, enable menus, enable featured images.
+- \`front-page.php\`: Contains the FULL landing page.
+- \`header.php\`: Dynamic site title, menu support, load Google Fonts based on preset.
+- \`footer.php\`: Clean structure, dynamic year.
+
+---
+
+## 🎯 Frontend Stack & Rules
+
+- Stack: HTML5, Tailwind CSS, Vanilla JavaScript, GSAP (CDN)
+- NO: React, Build tools, Complex dependencies
+- Motion: GSAP for all animations, ScrollTrigger for sections, Staggered appearances, Smooth intentional motion.
+- Images: Use real Unsplash images matching preset mood. No placeholders.
+- Copy: Clear, bold, benefit-driven. No fluff, no generic phrases. Focus on outcomes and specificity.
+
+---
+
+## 📦 Output Format (CRITICAL)
+
+You must:
+1. Generate ALL files
+2. Separate clearly:
+   \`/style.css\`
+   \`\`\`css
+   /* code */
+   \`\`\`
+   \`/functions.php\`
+   \`\`\`php
+   /* code */
+   \`\`\`
+3. Ensure it works as a theme, ready to zip and upload.
+
+---
+
+## ⚠️ Step 2 — Build Immediately
+
+Do not explain. Do not justify. Do not ask anything else.
+
+Build the scalable WordPress asset now.
     `.trim();
   }, [data]);
 
