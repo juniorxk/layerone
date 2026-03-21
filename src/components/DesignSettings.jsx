@@ -1,3 +1,5 @@
+import { PRESETS } from '../config/presets';
+
 export default function DesignSettings({ data, updateData }) {
   const handleChange = (e) => {
     updateData({ [e.target.name]: e.target.value });
@@ -7,27 +9,135 @@ export default function DesignSettings({ data, updateData }) {
     updateData({ [e.target.name]: e.target.checked });
   };
 
+  const handlePresetSelect = (e) => {
+    updateData({ theme: PRESETS[e.target.value] });
+  };
+
+  const handleThemeChange = (category, key, value) => {
+    updateData({
+      theme: {
+        ...data.theme,
+        id: "custom",
+        name: "Custom (Define your own theme)",
+        [category]: {
+          ...(typeof data.theme[category] === 'object' ? data.theme[category] : {}),
+          [key]: value
+        }
+      }
+    });
+  };
+
+  const handleMoodMotionChange = (key, value) => {
+    updateData({
+      theme: {
+        ...data.theme,
+        id: "custom",
+        name: "Custom (Define your own theme)",
+        [key]: value
+      }
+    });
+  };
+
   return (
     <div className="space-y-6">
       
       {/* Design System Config */}
       <div className="space-y-4">
         <div className="grid grid-cols-2 gap-4">
-          <div>
+          <div className="col-span-2">
             <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wide mb-2">Aesthetic Preset</label>
             <select 
-              name="aestheticPreset"
-              value={data.aestheticPreset} 
-              onChange={handleChange}
+              value={data.theme.id} 
+              onChange={handlePresetSelect}
               className="w-full px-3 py-2 bg-white border border-slate-200 rounded-md text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 appearance-none cursor-pointer"
             >
-              <option value="Preset A — Organic Authority">Preset A — Organic Authority (Trust + Warmth)</option>
-              <option value="Preset B — Dark Premium">Preset B — Dark Premium (Luxury + Power)</option>
-              <option value="Preset C — Tech Edge">Preset C — Tech Edge (Modern SaaS)</option>
-              <option value="Preset D — Editorial Impact">Preset D — Editorial Impact (Story + Brand)</option>
+              {Object.values(PRESETS).map(preset => (
+                <option key={preset.id} value={preset.id}>{preset.name}</option>
+              ))}
             </select>
           </div>
-          <div>
+
+          <div className="col-span-2 bg-slate-50 border border-slate-100 rounded-lg p-3 space-y-4">
+            <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wide">Palette Customization</label>
+            <div className="grid grid-cols-3 gap-3">
+              <div>
+                <label className="block text-[10px] text-slate-500 mb-1">Primary/Dark</label>
+                <div className="flex bg-white rounded border border-slate-200 overflow-hidden items-center focus-within:ring-2 focus-within:ring-indigo-500/40">
+                  <input 
+                    type="color" 
+                    value={data.theme.palette.primary} 
+                    onChange={(e) => handleThemeChange('palette', 'primary', e.target.value)}
+                    className="w-8 h-8 rounded-none border-0 cursor-pointer p-0"
+                  />
+                  <input 
+                    type="text" 
+                    value={data.theme.palette.primary}
+                    onChange={(e) => handleThemeChange('palette', 'primary', e.target.value)}
+                    className="w-full text-xs px-2 outline-none uppercase font-mono text-slate-600"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-[10px] text-slate-500 mb-1">Secondary/Light</label>
+                <div className="flex bg-white rounded border border-slate-200 overflow-hidden items-center focus-within:ring-2 focus-within:ring-indigo-500/40">
+                  <input 
+                    type="color" 
+                    value={data.theme.palette.secondary} 
+                    onChange={(e) => handleThemeChange('palette', 'secondary', e.target.value)}
+                    className="w-8 h-8 rounded-none border-0 cursor-pointer p-0"
+                  />
+                  <input 
+                    type="text" 
+                    value={data.theme.palette.secondary}
+                    onChange={(e) => handleThemeChange('palette', 'secondary', e.target.value)}
+                    className="w-full text-xs px-2 outline-none uppercase font-mono text-slate-600"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-[10px] text-slate-500 mb-1">Accent</label>
+                <div className="flex bg-white rounded border border-slate-200 overflow-hidden items-center focus-within:ring-2 focus-within:ring-indigo-500/40">
+                  <input 
+                    type="color" 
+                    value={data.theme.palette.accent} 
+                    onChange={(e) => handleThemeChange('palette', 'accent', e.target.value)}
+                    className="w-8 h-8 rounded-none border-0 cursor-pointer p-0"
+                  />
+                  <input 
+                    type="text" 
+                    value={data.theme.palette.accent}
+                    onChange={(e) => handleThemeChange('palette', 'accent', e.target.value)}
+                    className="w-full text-xs px-2 outline-none uppercase font-mono text-slate-600"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {data.theme.id === 'custom' && (
+              <div className="space-y-3 pt-2 border-t border-slate-200/60">
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[10px] text-slate-500 mb-1">Headings Font</label>
+                    <input type="text" value={data.theme.typography.headings} onChange={(e) => handleThemeChange('typography', 'headings', e.target.value)} className="w-full px-2 py-1.5 text-xs bg-white border border-slate-200 rounded outline-none" placeholder="e.g. Inter" />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] text-slate-500 mb-1">Accent/Mono Font</label>
+                    <input type="text" value={data.theme.typography.accent} onChange={(e) => handleThemeChange('typography', 'accent', e.target.value)} className="w-full px-2 py-1.5 text-xs bg-white border border-slate-200 rounded outline-none" placeholder="e.g. Playfair" />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-[10px] text-slate-500 mb-1">Image Mood / Art Direction</label>
+                  <input type="text" value={data.theme.mood} onChange={(e) => handleMoodMotionChange('mood', e.target.value)} className="w-full px-2 py-1.5 text-xs bg-white border border-slate-200 rounded outline-none" placeholder="Photographic, dark shadows..." />
+                </div>
+                <div>
+                  <label className="block text-[10px] text-slate-500 mb-1">Motion Style</label>
+                  <input type="text" value={data.theme.motion} onChange={(e) => handleMoodMotionChange('motion', e.target.value)} className="w-full px-2 py-1.5 text-xs bg-white border border-slate-200 rounded outline-none" placeholder="Snappy, spring-based..." />
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="col-span-2">
             <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wide mb-2">Style Intensity</label>
             <select 
               name="styleIntensity"
@@ -45,7 +155,7 @@ export default function DesignSettings({ data, updateData }) {
 
       <div className="h-px w-full bg-slate-100" />
 
-      {/* Advanced Parameters (Collapsible-like but flat for speed) */}
+      {/* Advanced Parameters */}
       <div className="space-y-4 pt-1">
         <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Advanced Parameters</h3>
         

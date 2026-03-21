@@ -48,7 +48,7 @@ Generate a complete WordPress theme (zip-ready structure) that:
 ${data.benefits.filter(Boolean).map(b => `   - ${b}`).join('\n') || '   - [Awaiting benefits]'}
 5. **How it Works**: 
    ${data.howItWorks || '[Not provided]'}
-6. **Aesthetic preset**: ${data.aestheticPreset}
+6. **Aesthetic preset**: ${data.theme.name}
 7. **Additional pages needed**: 
 ${selectedPagesArray.filter(p => p !== 'landing').map(p => `   - ${p.charAt(0).toUpperCase() + p.slice(1)} Page`).join('\n') || '   - [None]'}
 8. **Language of the content**: ${data.language || 'English'}
@@ -66,37 +66,25 @@ ${selectedPagesArray.filter(p => p !== 'landing').map(p => `   - ${p.charAt(0).t
 
 ---
 
-## 🎨 Aesthetic Presets (MANDATORY)
+## 🎨 Active Design System (MANDATORY)
 
-Each preset defines a complete design system.
+You must strictly adhere to the following design system parameters for this build:
 
-**Preset A — Organic Authority (Trust + Warmth)**
-- Palette: Deep Green #1F3D2B, Soft Beige #F5F2EB, Accent #D97706
-- Typography: Headings "Plus Jakarta Sans", Accent "Cormorant Garamond Italic"
-- Image Mood: Natural light, people, calm environments
-- Motion Style: Soft, smooth, confident
-
-**Preset B — Dark Premium (Luxury + Power)**
-- Palette: Black #0B0B0F, Gold #C9A84C, Off-white #F5F5F5
-- Typography: Headings "Inter", Accent "Playfair Display Italic"
-- Image Mood: Architecture, shadows, luxury materials
-- Motion Style: Smooth, delayed, cinematic
-
-**Preset C — Tech Edge (Modern SaaS)**
-- Palette: Blue #2563EB, Light Gray #F8FAFC, Dark #0F172A
-- Typography: Headings "Sora", Mono "JetBrains Mono"
-- Image Mood: Abstract tech, UI visuals, data patterns
-- Motion Style: Fast, responsive, precise
-
-**Preset D — Editorial Impact (Story + Brand)**
-- Palette: Off-white #FAF7F2, Black #111111, Accent #E11D48
-- Typography: Headings "DM Serif Display", Body "Inter"
-- Image Mood: Photography-driven, magazine style
-- Motion Style: Dramatic, typography-led
+**Theme Identity**: ${data.theme.name}
+- **Palette Rules**: 
+  - Primary Base/Dark: ${data.theme.palette.primary}
+  - Secondary Base/Light: ${data.theme.palette.secondary}
+  - Highlight Accent: ${data.theme.palette.accent}
+- **Typography Rules**: 
+  - Headings: "${data.theme.typography.headings}"
+  - Accent/Mono details: "${data.theme.typography.accent}"
+  - Body Text: "${data.theme.typography.body}"
+- **Image/Asset Mood**: ${data.theme.mood}
+- **Interaction/Motion Style**: ${data.theme.motion}
 
 ---
 
-## 🎨 Design System (NON-NEGOTIABLE)
+## 🎨 Global Design Rules (NON-NEGOTIABLE)
 
 **Visual Quality**
 - No flat UI, no generic SaaS sections, no basic layouts

@@ -6,6 +6,8 @@ import DesignSettings from './components/DesignSettings';
 import PromptPreview from './components/PromptPreview';
 import { Settings, Layout, Code, TerminalSquare } from 'lucide-react';
 
+import { PRESETS } from './config/presets';
+
 const initialState = {
   // Business Info
   brandName: "",
@@ -26,7 +28,7 @@ const initialState = {
   // Page Builder
   pages: { landing: true, about: false, services: false, contact: false, blog: false, pricing: false, faq: false, custom: "" },
   // Design Config
-  aestheticPreset: "Preset A — Organic Authority", // Custom presets
+  theme: PRESETS["preset-a"],
   styleIntensity: "Balanced", // Minimal, Balanced, High-impact
   // Advanced Controls
   seoKeywords: "",
