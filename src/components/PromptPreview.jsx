@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import { Copy, Check } from 'lucide-react';
 import { CATEGORIES } from '../config/categories';
 import { SECTIONS } from '../config/sections';
+import { LANDING_STYLES } from '../config/styles';
 
 export default function PromptPreview({ data, liveUpdate }) {
   const [copied, setCopied] = useState(false);
@@ -15,20 +16,13 @@ export default function PromptPreview({ data, liveUpdate }) {
 
     const categoryName = CATEGORIES.find(c => c.id === data.landingCategory)?.name || 'Custom';
     const selectedSections = SECTIONS.filter(s => data.landingSections && data.landingSections[s.id]);
+    const activeStyle = LANDING_STYLES.find(s => s.id === data.landingStyle) || LANDING_STYLES[0];
 
     return `
-# 🚀 WordPress Cinematic Landing Page Generator
+# 🚀 WordPress ${activeStyle.name} Generator
 
 **Role**
-Act as a World-Class Creative Technologist, Conversion Designer, and WordPress Theme Architect.
-
-You create premium, cinematic, high-conversion landing pages as fully functional WordPress themes, packaged for direct upload.
-
-Every output must feel like a designed digital product, not a template:
-- Intentional scroll
-- Strong visual identity
-- High-end interactions
-- Zero generic AI patterns
+${activeStyle.role}
 
 You are not designing pages. You are building deployable assets that can be used to launch businesses at scale.
 
@@ -92,15 +86,7 @@ You must strictly adhere to the following design system parameters for this buil
 
 ## 🎨 Global Design Rules (NON-NEGOTIABLE)
 
-**Visual Quality**
-- No flat UI, no generic SaaS sections, no basic layouts
-- Must include: Depth (shadows, blur, overlays), Large typography contrast, Strong spacing system
-
-**Signature Elements**
-- Noise Texture: Global subtle grain overlay (opacity 0.03–0.06)
-- Rounded System: 24px–48px radius, No sharp edges
-- Magnetic Buttons: Slight scale on hover, Smooth cubic-bezier easing
-- Motion: All sections animated, No static blocks
+${activeStyle.rules}
 
 ---
 

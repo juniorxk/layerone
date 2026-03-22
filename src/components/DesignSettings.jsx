@@ -1,4 +1,5 @@
 import { PRESETS } from '../config/presets';
+import { LANDING_STYLES } from '../config/styles';
 
 export default function DesignSettings({ data, updateData }) {
   const handleChange = (e) => {
@@ -44,6 +45,23 @@ export default function DesignSettings({ data, updateData }) {
       {/* Design System Config */}
       <div className="space-y-4">
         <div className="grid grid-cols-2 gap-4">
+          <div className="col-span-2 bg-indigo-50/50 p-4 border border-indigo-100 rounded-lg">
+            <label className="block text-xs font-semibold text-indigo-900 uppercase tracking-wide mb-2">Landing Page Style</label>
+            <select 
+              name="landingStyle"
+              value={data.landingStyle} 
+              onChange={handleChange}
+              className="w-full px-3 py-2 bg-white border border-indigo-200 rounded-md text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 appearance-none cursor-pointer shadow-sm"
+            >
+              {LANDING_STYLES.map(style => (
+                <option key={style.id} value={style.id}>{style.name}</option>
+              ))}
+            </select>
+            <p className="text-[11px] text-indigo-700/80 mt-2 leading-relaxed">
+              {LANDING_STYLES.find(s => s.id === data.landingStyle)?.description || ''}
+            </p>
+          </div>
+
           <div className="col-span-2">
             <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wide mb-2">Aesthetic Preset</label>
             <select 

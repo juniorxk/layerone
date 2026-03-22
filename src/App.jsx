@@ -9,6 +9,7 @@ import { Settings, Layout, Code, TerminalSquare } from 'lucide-react';
 import { PRESETS } from './config/presets';
 import { CATEGORIES } from './config/categories';
 import { SECTIONS } from './config/sections';
+import { LANDING_STYLES } from './config/styles';
 
 const defaultCategory = CATEGORIES[0];
 const initialLandingSections = SECTIONS.reduce((acc, section) => {
@@ -19,6 +20,7 @@ const initialLandingSections = SECTIONS.reduce((acc, section) => {
 const initialState = {
   // Landing Page Structure
   landingCategory: defaultCategory.id,
+  landingStyle: LANDING_STYLES[0].id,
   landingSections: initialLandingSections,
   sectionContent: {},
   // Business Info
