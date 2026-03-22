@@ -20,6 +20,7 @@ const initialState = {
   // Landing Page Structure
   landingCategory: defaultCategory.id,
   landingSections: initialLandingSections,
+  sectionContent: {},
   // Business Info
   brandName: "",
   purpose: "",

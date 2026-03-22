@@ -107,7 +107,11 @@ You must strictly adhere to the following design system parameters for this buil
 ## 🧩 Page Architecture (MANDATORY)
 
 1. **Navbar**: Floating, Transparent → blur on scroll, CTA highlighted
-${selectedSections.map((s, i) => `${i + 2}. **${s.name}**: ${s.description}`).join('\n')}
+${selectedSections.map((s, i) => {
+  const customContent = data.sectionContent?.[s.id];
+  const contentStr = customContent ? `\n   - **Specific Context**: ${customContent}` : '';
+  return `${i + 2}. **${s.name}**: ${s.description}${contentStr}`;
+}).join('\n')}
 ${selectedSections.length + 2}. **Footer**: Brand, Links.
 
 ---
