@@ -169,17 +169,6 @@ export default function InputForm({ data, updateData }) {
           />
         </div>
 
-        <div>
-          <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wide mb-1.5">How It Works (3 Steps)</label>
-          <textarea 
-            name="howItWorks"
-            value={data.howItWorks} 
-            onChange={handleChange}
-            placeholder="1. Onboard 2. Strategy 3. Launch"
-            rows={2}
-            className="w-full px-3 py-2 bg-white border border-slate-200 rounded-md text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 transition-all resize-none placeholder:text-slate-400"
-          />
-        </div>
 
         <div>
           <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wide mb-1.5">Tone of Voice (Optional)</label>

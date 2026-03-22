@@ -46,12 +46,10 @@ Generate a complete WordPress theme (zip-ready structure) that:
 4. **Primary goal (conversion)**: ${data.primaryCTA || 'Get Started'}
 5. **3 Core benefits**:
 ${data.benefits.filter(Boolean).map(b => `   - ${b}`).join('\n') || '   - [Awaiting benefits]'}
-6. **How it Works**: 
-   ${data.howItWorks || '[Not provided]'}
-7. **Aesthetic preset**: ${data.theme.name}
-8. **Additional pages needed**: 
+6. **Aesthetic preset**: ${data.theme.name}
+7. **Additional pages needed**: 
 ${selectedPagesArray.filter(p => p !== 'landing').map(p => `   - ${p.charAt(0).toUpperCase() + p.slice(1)} Page`).join('\n') || '   - [None]'}
-9. **Language of the content**: ${data.language || 'English'}
+8. **Language of the content**: ${data.language || 'English'}
 
 *(Additional Business Context)*
 - Industry: ${data.industry || '[Not provided]'}
