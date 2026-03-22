@@ -1,5 +1,7 @@
 import { useState, useMemo } from 'react';
 import { Copy, Check } from 'lucide-react';
+import { CATEGORIES } from '../config/categories';
+import { SECTIONS } from '../config/sections';
 
 export default function PromptPreview({ data, liveUpdate }) {
   const [copied, setCopied] = useState(false);
@@ -10,6 +12,9 @@ export default function PromptPreview({ data, liveUpdate }) {
     const selectedPagesArray = Object.entries(data.pages)
       .filter(([key, val]) => (typeof val === 'boolean' && val) || (key === 'custom' && val.length > 0))
       .map(([key, val]) => key === 'custom' ? val : key);
+
+    const categoryName = CATEGORIES.find(c => c.id === data.landingCategory)?.name || 'Custom';
+    const selectedSections = SECTIONS.filter(s => data.landingSections && data.landingSections[s.id]);
 
     return `
 # 🚀 WordPress Cinematic Landing Page Generator
@@ -42,16 +47,17 @@ Generate a complete WordPress theme (zip-ready structure) that:
 ## 🧠 Step 1 — Context Inputs
 
 1. **Brand name + purpose**: ${data.brandName || '[Not provided]'} — ${data.purpose || '[Not provided]'}
-2. **Target audience**: ${data.targetAudience || '[Not provided]'}
-3. **Primary goal (conversion)**: ${data.primaryCTA || 'Get Started'}
-4. **3 Core benefits**:
+2. **Main Category**: ${categoryName}
+3. **Target audience**: ${data.targetAudience || '[Not provided]'}
+4. **Primary goal (conversion)**: ${data.primaryCTA || 'Get Started'}
+5. **3 Core benefits**:
 ${data.benefits.filter(Boolean).map(b => `   - ${b}`).join('\n') || '   - [Awaiting benefits]'}
-5. **How it Works**: 
+6. **How it Works**: 
    ${data.howItWorks || '[Not provided]'}
-6. **Aesthetic preset**: ${data.theme.name}
-7. **Additional pages needed**: 
+7. **Aesthetic preset**: ${data.theme.name}
+8. **Additional pages needed**: 
 ${selectedPagesArray.filter(p => p !== 'landing').map(p => `   - ${p.charAt(0).toUpperCase() + p.slice(1)} Page`).join('\n') || '   - [None]'}
-8. **Language of the content**: ${data.language || 'English'}
+9. **Language of the content**: ${data.language || 'English'}
 
 *(Additional Business Context)*
 - Industry: ${data.industry || '[Not provided]'}
@@ -101,13 +107,8 @@ You must strictly adhere to the following design system parameters for this buil
 ## 🧩 Page Architecture (MANDATORY)
 
 1. **Navbar**: Floating, Transparent → blur on scroll, CTA highlighted
-2. **Hero (Full Screen)**: 100vh, Strong headline split in 2 visual weights, Background image (Unsplash), Gradient overlay, CTA visible immediately
-3. **Value Section (3 Interactive Blocks)**: Animated card (content swap) + Typing/live feed effect + Visual interaction. Must feel like product experience.
-4. **Differentiation Section**: Contrast messaging ("Most companies do X", "We do Y"). Bold and visually dominant.
-5. **Process Section (3 Steps)**: Scroll-based interaction OR stacking effect. Each step visually distinct.
-6. **How It Works (MANDATORY)**: 3-step horizontal (desktop) / vertical (mobile). Step number (01, 02, 03 — monospace style), short title, 1–2 line explanation, visual or animated element.
-7. **CTA Section**: Focused conversion block, minimal distractions.
-8. **Footer**: Brand, Links.
+${selectedSections.map((s, i) => `${i + 2}. **${s.name}**: ${s.description}`).join('\n')}
+${selectedSections.length + 2}. **Footer**: Brand, Links.
 
 ---
 

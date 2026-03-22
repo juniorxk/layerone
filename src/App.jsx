@@ -7,8 +7,19 @@ import PromptPreview from './components/PromptPreview';
 import { Settings, Layout, Code, TerminalSquare } from 'lucide-react';
 
 import { PRESETS } from './config/presets';
+import { CATEGORIES } from './config/categories';
+import { SECTIONS } from './config/sections';
+
+const defaultCategory = CATEGORIES[0];
+const initialLandingSections = SECTIONS.reduce((acc, section) => {
+  acc[section.id] = defaultCategory.recommended.includes(section.id);
+  return acc;
+}, {});
 
 const initialState = {
+  // Landing Page Structure
+  landingCategory: defaultCategory.id,
+  landingSections: initialLandingSections,
   // Business Info
   brandName: "",
   purpose: "",
