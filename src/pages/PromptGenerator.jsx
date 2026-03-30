@@ -1,10 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { supabase } from '../lib/supabase';
 import InputForm from '../components/InputForm';
 import IndustrySelector from '../components/IndustrySelector';
 import PageSelector from '../components/PageSelector';
 import DesignSettings from '../components/DesignSettings';
 import PromptPreview from '../components/PromptPreview';
-import { Settings, Layout, Code, TerminalSquare } from 'lucide-react';
+import { Settings, Layout, Code, TerminalSquare, ArrowLeft } from 'lucide-react';
 
 import { PRESETS } from '../config/presets';
 import { CATEGORIES } from '../config/categories';
@@ -47,13 +49,52 @@ const initialState = {
   // Advanced Controls
   seoKeywords: "",
   location: "",
-  language: "English",
+  language: "Portuguese",
   enableBlogAuto: false
 };
 
 export default function PromptGenerator() {
   const [data, setData] = useState(initialState);
   const [liveUpdate, setLiveUpdate] = useState(true);
+  
+  const { leadId } = useParams();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (leadId) {
+      const fetchLead = async () => {
+        const { data: lead, error } = await supabase
+          .from('leads')
+          .select('*')
+          .eq('id', leadId)
+          .single();
+          
+        if (lead && !error) {
+           const benefitsArray = lead.key_strengths 
+             ? lead.key_strengths.split('\n').filter(b => b.trim()).slice(0,3)
+             : ["", "", ""];
+           // Ensure length 3
+           while(benefitsArray.length < 3) benefitsArray.push("");
+
+           setData(prev => ({
+              ...prev,
+              brandName: lead.company_name || "",
+              industry: lead.core_product || "",
+              targetAudience: lead.target_audience || "",
+              purpose: lead.company_description || "",
+              differentiation: lead.differentiator || "",
+              pricing: lead.average_price || "",
+              location: lead.location || "",
+              benefits: benefitsArray,
+              // Pre-fill fields missing in the form but crucial:
+              tone: "Profissional, acolhedor e focado em conversão",
+              primaryCTA: "Agendar Consulta via WhatsApp"
+           }));
+        }
+      };
+      fetchLead();
+    }
+  }, [leadId]);
 
   // Partial update helper
   const updateData = (updates) => {
@@ -83,12 +124,22 @@ export default function PromptGenerator() {
               <p className="text-xs text-slate-500 mt-0.5">Prompt Operating System</p>
             </div>
           </div>
-          <button 
-            onClick={resetForm}
-            className="text-xs font-medium text-slate-400 hover:text-slate-700 transition-colors"
-          >
-            Reset
-          </button>
+          <div className="flex items-center gap-3">
+            {leadId && (
+              <button 
+                onClick={() => navigate('/admin')}
+                className="flex items-center gap-1 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-md text-xs font-medium transition-colors border border-slate-200"
+              >
+                <ArrowLeft className="w-3.5 h-3.5" /> Voltar
+              </button>
+            )}
+            <button 
+              onClick={resetForm}
+              className="text-xs font-medium text-slate-400 hover:text-slate-700 transition-colors"
+            >
+              Reset
+            </button>
+          </div>
         </header>
 
         {/* Scrollable Form Content */}

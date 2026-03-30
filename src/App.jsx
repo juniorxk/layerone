@@ -58,6 +58,14 @@ function App() {
             </ProtectedRoute>
           } 
         />
+        <Route 
+          path="/admin/generator/:leadId" 
+          element={
+            <ProtectedRoute>
+              <PromptGenerator />
+            </ProtectedRoute>
+          } 
+        />
       </Routes>
     </BrowserRouter>
   );

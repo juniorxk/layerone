@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '../lib/supabase';
-import { ChevronRight, ChevronLeft, CheckCircle, ArrowRight, Layout } from 'lucide-react';
+import { ChevronRight, ChevronLeft, CheckCircle, ArrowRight, Layout, Upload, X } from 'lucide-react';
 
 const steps = [
   { id: 'intro', title: 'Intro' },
@@ -35,15 +35,57 @@ export default function LandingPage() {
     keyStrengths: '',
     testimonials: '',
     hasPhotos: '',
+    photos: [],
     whatsapp: '',
+    telephone: '',
+    email: '',
     contactMethod: '',
     hasLogo: '',
-    brandColors: '',
-    deliveryTimeline: '',
+    logo: null,
+    brandColors: { primary: '#6366f1', secondary: '#ffffff', other1: '#000000', other2: '#d1d5db' },
     additionalInfo: ''
   });
 
   const updateForm = (field, value) => setFormData(prev => ({ ...prev, [field]: value }));
+
+  const updateColor = (colorKey, value) => {
+    setFormData(prev => ({
+      ...prev,
+      brandColors: { ...prev.brandColors, [colorKey]: value }
+    }));
+  };
+
+  const handlePhoneMask = (value) => {
+    let raw = value.replace(/\D/g, '');
+    raw = raw.substring(0, 11);
+    
+    if (raw.length === 0) return '';
+    if (raw.length <= 2) return `(${raw}`;
+    if (raw.length <= 6) return `(${raw.substring(0, 2)}) ${raw.substring(2)}`;
+    if (raw.length <= 10) return `(${raw.substring(0, 2)}) ${raw.substring(2, 6)}-${raw.substring(6)}`;
+    return `(${raw.substring(0, 2)}) ${raw.substring(2, 7)}-${raw.substring(7)}`;
+  };
+
+  const handleLogoUpload = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      updateForm('logo', e.target.files[0]);
+    }
+  };
+
+  const handlePhotosUpload = (e) => {
+    if (e.target.files) {
+      const newFiles = Array.from(e.target.files);
+      setFormData(prev => ({ ...prev, photos: [...prev.photos, ...newFiles] }));
+    }
+  };
+
+  const removePhoto = (index) => {
+    setFormData(prev => {
+      const newPhotos = [...prev.photos];
+      newPhotos.splice(index, 1);
+      return { ...prev, photos: newPhotos };
+    });
+  };
 
   const nextStep = () => {
     if (currentStep < steps.length - 1) {
@@ -60,7 +102,32 @@ export default function LandingPage() {
   const submitForm = async () => {
     setIsSubmitting(true);
     try {
-      const { error } = await supabase.from('leads').insert([{
+      let logoUrl = null;
+      let photosUrls = [];
+
+      if (formData.logo) {
+        const fileExt = formData.logo.name.split('.').pop();
+        const fileName = `logo_${Date.now()}.${fileExt}`;
+        const { data, error } = await supabase.storage.from('leads-media').upload(fileName, formData.logo);
+        if (!error && data) {
+          const { data: publicUrlData } = supabase.storage.from('leads-media').getPublicUrl(fileName);
+          logoUrl = publicUrlData.publicUrl;
+        }
+      }
+
+      if (formData.photos.length > 0) {
+        for (const file of formData.photos) {
+          const fileExt = file.name.split('.').pop();
+          const fileName = `photo_${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
+          const { data, error } = await supabase.storage.from('leads-media').upload(fileName, file);
+          if (!error && data) {
+            const { data: publicUrlData } = supabase.storage.from('leads-media').getPublicUrl(fileName);
+            photosUrls.push(publicUrlData.publicUrl);
+          }
+        }
+      }
+
+      const payload = {
         company_name: formData.companyName,
         company_description: formData.companyDescription,
         location: formData.location,
@@ -75,19 +142,26 @@ export default function LandingPage() {
         key_strengths: formData.keyStrengths,
         testimonials: formData.testimonials,
         has_photos: formData.hasPhotos,
+        photos_urls: JSON.stringify(photosUrls),
         whatsapp: formData.whatsapp,
+        telephone: formData.telephone,
+        email: formData.email,
         contact_method: formData.contactMethod,
         has_logo: formData.hasLogo,
-        brand_colors: formData.brandColors,
-        delivery_timeline: formData.deliveryTimeline,
+        logo_url: logoUrl,
+        brand_colors: JSON.stringify(formData.brandColors),
         additional_info: formData.additionalInfo
-      }]);
+      };
 
-      if (error) throw error;
+      const { error } = await supabase.from('leads').insert([payload]);
+
+      if (error) {
+        throw error;
+      }
       setIsSuccess(true);
     } catch (err) {
       console.error('Submission error:', err);
-      alert('Houve um erro ao enviar. Tente novamente.');
+      alert('Houve um erro ao enviar. Certifique-se de que o bucket "leads-media" esteja configurado no Supabase como Public, ou tente novamente.');
     } finally {
       setIsSubmitting(false);
     }
@@ -99,16 +173,9 @@ export default function LandingPage() {
     out: { opacity: 0, x: -20 }
   };
 
-  const pageTransition = {
-    type: 'tween',
-    ease: 'anticipate',
-    duration: 0.4
-  };
-
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col items-center justify-center p-4 selection:bg-indigo-500/30">
       
-      {/* Background ambient light */}
       <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
         <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-indigo-600/20 blur-[120px] rounded-full mix-blend-screen" />
         <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-purple-600/10 blur-[120px] rounded-full mix-blend-screen" />
@@ -116,7 +183,6 @@ export default function LandingPage() {
 
       <div className="w-full max-w-2xl z-10">
         
-        {/* Progress header (hidden on intro and success) */}
         {currentStep > 0 && !isSuccess && (
           <div className="mb-8">
             <div className="flex items-center justify-between text-xs font-semibold text-slate-400 mb-3 tracking-widest uppercase">
@@ -134,7 +200,6 @@ export default function LandingPage() {
           </div>
         )}
 
-        {/* Form Container */}
         <div className="bg-slate-900/60 backdrop-blur-xl border border-slate-800 rounded-3xl p-8 md:p-12 shadow-2xl relative overflow-hidden">
           
           <AnimatePresence mode="wait">
@@ -145,7 +210,7 @@ export default function LandingPage() {
                 animate="in"
                 exit="out"
                 variants={pageVariants}
-                transition={pageTransition}
+                transition={{ duration: 0.4 }}
               >
                 {/* STEP 0: Intro */}
                 {currentStep === 0 && (
@@ -362,7 +427,7 @@ export default function LandingPage() {
                         />
                       </div>
 
-                      <div className="space-y-3">
+                      <div className="space-y-4">
                         <label className="text-sm font-medium text-slate-300">Você tem fotos do seu negócio ou produtos?</label>
                         <div className="flex gap-4">
                           {['Sim', 'Não'].map(opt => (
@@ -375,7 +440,29 @@ export default function LandingPage() {
                             </button>
                           ))}
                         </div>
-                        <p className="text-xs text-slate-500 pt-1">Se quiser, você pode pedir envio depois no WhatsApp</p>
+
+                        {formData.hasPhotos === 'Sim' && (
+                          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="mt-4">
+                            <label className="flex items-center justify-center w-full h-32 px-4 transition bg-slate-950/50 border-2 border-slate-800 border-dashed rounded-xl appearance-none cursor-pointer hover:border-indigo-500/50 hover:bg-slate-900 focus:outline-none">
+                                <span className="flex flex-col items-center space-y-2 text-slate-400">
+                                    <Upload className="w-6 h-6" />
+                                    <span className="font-medium text-sm">Clique para escolher as fotos</span>
+                                </span>
+                                <input type="file" multiple accept="image/*" className="hidden" onChange={handlePhotosUpload} />
+                            </label>
+
+                            {formData.photos.length > 0 && (
+                              <div className="flex gap-3 mt-4 overflow-x-auto pb-2">
+                                {formData.photos.map((photo, i) => (
+                                  <div key={i} className="relative flex-shrink-0 w-24 h-24 bg-slate-800 rounded-lg overflow-hidden border border-slate-700">
+                                    <img src={URL.createObjectURL(photo)} alt="preview" className="w-full h-full object-cover" />
+                                    <button onClick={() => removePhoto(i)} className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-0.5 shadow-lg"><X className="w-3 h-3" /></button>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </motion.div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -397,16 +484,38 @@ export default function LandingPage() {
                         <input 
                           type="tel" 
                           value={formData.whatsapp}
-                          onChange={(e) => updateForm('whatsapp', e.target.value)}
-                          placeholder="(00) 00000-0000"
-                          className="w-full bg-slate-950/50 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
+                          onChange={(e) => updateForm('whatsapp', handlePhoneMask(e.target.value))}
+                          placeholder="(11) 99999-9999"
+                          className="w-full bg-slate-950/50 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all placeholder-slate-600"
+                        />
+                      </div>
+
+                      <div className="space-y-3">
+                        <label className="text-sm font-medium text-slate-300">Tem um telefone fixo ou alternativo? (Opcional)</label>
+                        <input 
+                          type="tel" 
+                          value={formData.telephone}
+                          onChange={(e) => updateForm('telephone', handlePhoneMask(e.target.value))}
+                          placeholder="(11) 4002-8922"
+                          className="w-full bg-slate-950/50 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all placeholder-slate-600"
+                        />
+                      </div>
+
+                      <div className="space-y-3">
+                        <label className="text-sm font-medium text-slate-300">Qual o seu e-mail comercial? (Opcional)</label>
+                        <input 
+                          type="email" 
+                          value={formData.email}
+                          onChange={(e) => updateForm('email', e.target.value)}
+                          placeholder="contato@suaempresa.com.br"
+                          className="w-full bg-slate-950/50 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all placeholder-slate-600"
                         />
                       </div>
 
                       <div className="space-y-3">
                         <label className="text-sm font-medium text-slate-300">Quer que o cliente entre em contato como?</label>
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                          {['WhatsApp', 'Formulário', 'Ambos'].map(opt => (
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                          {['WhatsApp', 'Telefone', 'E-mail', 'Todos'].map(opt => (
                             <button
                               key={opt}
                               onClick={() => updateForm('contactMethod', opt)}
@@ -427,7 +536,7 @@ export default function LandingPage() {
                     <h2 className="text-2xl font-semibold text-white">Visual da Marca</h2>
                     
                     <div className="space-y-6">
-                      <div className="space-y-3">
+                      <div className="space-y-4">
                         <label className="text-sm font-medium text-slate-300">Você tem logo da empresa?</label>
                         <div className="flex gap-4">
                           {['Sim', 'Não'].map(opt => (
@@ -440,24 +549,57 @@ export default function LandingPage() {
                             </button>
                           ))}
                         </div>
+
+                        {formData.hasLogo === 'Sim' && (
+                          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="mt-4">
+                             <label className="flex items-center justify-center w-full h-32 px-4 transition bg-slate-950/50 border-2 border-slate-800 border-dashed rounded-xl appearance-none cursor-pointer hover:border-indigo-500/50 hover:bg-slate-900 focus:outline-none">
+                                <span className="flex flex-col items-center space-y-2 text-slate-400">
+                                    <Upload className="w-6 h-6" />
+                                    <span className="font-medium text-sm">Selecione seu Logotipo (PNG, JPG)</span>
+                                </span>
+                                <input type="file" accept="image/*" className="hidden" onChange={handleLogoUpload} />
+                            </label>
+                            {formData.logo && (
+                              <div className="mt-3 p-3 bg-slate-800/80 rounded-lg flex items-center justify-between border border-slate-700">
+                                <span className="text-sm text-slate-300 truncate">{formData.logo.name}</span>
+                                <button onClick={() => updateForm('logo', null)} className="text-red-400 hover:text-red-300"><X className="w-4 h-4" /></button>
+                              </div>
+                            )}
+                          </motion.div>
+                        )}
                       </div>
 
-                      <div className="space-y-3">
-                        <label className="text-sm font-medium text-slate-300">Tem alguma cor que você gosta ou usa na marca?</label>
-                        <div className="flex gap-3">
-                          <input 
-                            type="color" 
-                            value={formData.brandColors.startsWith('#') ? formData.brandColors : '#6366f1'}
-                            onChange={(e) => updateForm('brandColors', e.target.value)}
-                            className="h-12 w-16 p-1 bg-slate-950/50 border border-slate-800 rounded-xl cursor-pointer"
-                          />
-                          <input 
-                            type="text" 
-                            value={formData.brandColors}
-                            onChange={(e) => updateForm('brandColors', e.target.value)}
-                            placeholder="Ex: Azul, vermelho, ou hex #000"
-                            className="flex-1 bg-slate-950/50 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
-                          />
+                      <div className="space-y-4 pt-4 border-t border-slate-800">
+                        <label className="text-sm font-medium text-slate-300">Selecione as cores da sua marca</label>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                           <div className="flex flex-col gap-2">
+                             <span className="text-xs text-slate-400 uppercase font-semibold">Cor Primária</span>
+                             <div className="flex items-center gap-2">
+                               <input type="color" value={formData.brandColors.primary} onChange={(e) => updateColor('primary', e.target.value)} className="h-10 w-12 p-1 bg-slate-950 border border-slate-700 rounded-lg cursor-pointer shrink-0" />
+                               <input type="text" value={formData.brandColors.primary} onChange={(e) => updateColor('primary', e.target.value)} className="w-full bg-slate-950 border border-slate-800 rounded-lg px-2 py-2 text-xs text-white uppercase" />
+                             </div>
+                           </div>
+                           <div className="flex flex-col gap-2">
+                             <span className="text-xs text-slate-400 uppercase font-semibold">Secundária</span>
+                             <div className="flex items-center gap-2">
+                               <input type="color" value={formData.brandColors.secondary} onChange={(e) => updateColor('secondary', e.target.value)} className="h-10 w-12 p-1 bg-slate-950 border border-slate-700 rounded-lg cursor-pointer shrink-0" />
+                               <input type="text" value={formData.brandColors.secondary} onChange={(e) => updateColor('secondary', e.target.value)} className="w-full bg-slate-950 border border-slate-800 rounded-lg px-2 py-2 text-xs text-white uppercase" />
+                             </div>
+                           </div>
+                           <div className="flex flex-col gap-2">
+                             <span className="text-xs text-slate-400 uppercase font-semibold">Outra Cor 1</span>
+                             <div className="flex items-center gap-2">
+                               <input type="color" value={formData.brandColors.other1} onChange={(e) => updateColor('other1', e.target.value)} className="h-10 w-12 p-1 bg-slate-950 border border-slate-700 rounded-lg cursor-pointer shrink-0" />
+                               <input type="text" value={formData.brandColors.other1} onChange={(e) => updateColor('other1', e.target.value)} className="w-full bg-slate-950 border border-slate-800 rounded-lg px-2 py-2 text-xs text-white uppercase" />
+                             </div>
+                           </div>
+                           <div className="flex flex-col gap-2">
+                             <span className="text-xs text-slate-400 uppercase font-semibold">Outra Cor 2</span>
+                             <div className="flex items-center gap-2">
+                               <input type="color" value={formData.brandColors.other2} onChange={(e) => updateColor('other2', e.target.value)} className="h-10 w-12 p-1 bg-slate-950 border border-slate-700 rounded-lg cursor-pointer shrink-0" />
+                               <input type="text" value={formData.brandColors.other2} onChange={(e) => updateColor('other2', e.target.value)} className="w-full bg-slate-950 border border-slate-800 rounded-lg px-2 py-2 text-xs text-white uppercase" />
+                             </div>
+                           </div>
                         </div>
                       </div>
                     </div>
@@ -471,26 +613,12 @@ export default function LandingPage() {
                     
                     <div className="space-y-6">
                       <div className="space-y-3">
-                        <label className="text-sm font-medium text-slate-300">Quando você gostaria que sua página estivesse pronta?</label>
-                        <div className="flex flex-col gap-3">
-                          {['O mais rápido possível', 'Essa semana', 'Sem pressa'].map(opt => (
-                            <button
-                              key={opt}
-                              onClick={() => updateForm('deliveryTimeline', opt)}
-                              className={`py-4 px-4 rounded-xl border text-sm font-medium text-left transition-all ${formData.deliveryTimeline === opt ? 'bg-indigo-500/10 border-indigo-500 text-indigo-400' : 'bg-slate-950/50 border-slate-800 text-slate-400 hover:border-slate-700'}`}
-                            >
-                              {opt}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-
-                      <div className="space-y-3">
                         <label className="text-sm font-medium text-slate-300">Quer adicionar mais alguma informação importante?</label>
                         <textarea 
                           value={formData.additionalInfo}
                           onChange={(e) => updateForm('additionalInfo', e.target.value)}
-                          className="w-full bg-slate-950/50 border border-slate-800 rounded-xl px-4 py-3 text-white h-24 resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
+                          className="w-full bg-slate-950/50 border border-slate-800 rounded-xl px-4 py-3 text-white h-32 resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
+                          placeholder="Fale mais qualquer detalhe que julgar necessário para construirmos a sua Landing Page."
                         />
                       </div>
                     </div>
@@ -513,7 +641,7 @@ export default function LandingPage() {
                       disabled={isSubmitting}
                       className="flex-1 px-6 py-3.5 bg-indigo-500 text-white font-semibold rounded-xl hover:bg-indigo-400 hover:shadow-[0_0_20px_-5px_var(--tw-shadow-color)] shadow-indigo-500 transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
                     >
-                      {isSubmitting ? 'Enviando...' : (currentStep === steps.length - 1 ? 'Finalizar e Enviar' : 'Continuar')}
+                      {isSubmitting ? 'Enviando e Salvando Imagens...' : (currentStep === steps.length - 1 ? 'Finalizar e Enviar' : 'Continuar')}
                       {!isSubmitting && currentStep < steps.length - 1 && <ChevronRight className="w-5 h-5" />}
                     </button>
                   </div>
