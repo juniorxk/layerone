@@ -21,21 +21,21 @@ export default function IndustrySelector({ data, updateData }) {
   };
 
   return (
-    <div className="bg-slate-50 border border-slate-100 rounded-lg p-4 mt-2">
-      <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wide mb-2">Industry Sector</label>
+    <div className="bg-slate-900 border border-slate-700/60 rounded-lg p-4 mt-2 shadow-inner shadow-slate-950/20">
+      <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2">Industry Sector</label>
       <select 
         value={data.industry} 
         onChange={handleSelect}
-        className="w-full px-3 py-2 bg-white border border-slate-200 rounded-md text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 appearance-none cursor-pointer transition-all"
+        className="w-full px-3 py-2 bg-slate-950/50 border border-slate-700/60 rounded-md text-sm text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 appearance-none cursor-pointer transition-all"
       >
-        <option value="" disabled>Select an industry...</option>
+        <option value="" disabled className="text-slate-500">Select an industry...</option>
         {industries.map(ind => (
           <option key={ind} value={ind}>{ind}</option>
         ))}
       </select>
       
       {data.industry && getHelperContext(data.industry) && (
-        <div className="mt-3 text-xs text-indigo-700 bg-indigo-50/50 p-2.5 rounded border border-indigo-100/50 flex items-start gap-2">
+        <div className="mt-3 text-xs text-indigo-300 bg-indigo-500/10 p-2.5 rounded border border-indigo-500/20 flex items-start gap-2">
            <svg className="w-4 h-4 flex-none mt-0.5 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>

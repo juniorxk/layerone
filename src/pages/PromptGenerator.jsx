@@ -86,7 +86,6 @@ export default function PromptGenerator() {
               pricing: lead.average_price || "",
               location: lead.location || "",
               benefits: benefitsArray,
-              // Pre-fill fields missing in the form but crucial:
               tone: "Profissional, acolhedor e focado em conversão",
               primaryCTA: "Agendar Consulta via WhatsApp"
            }));
@@ -96,7 +95,6 @@ export default function PromptGenerator() {
     }
   }, [leadId]);
 
-  // Partial update helper
   const updateData = (updates) => {
     setData((prev) => ({ ...prev, ...updates }));
   };
@@ -108,34 +106,34 @@ export default function PromptGenerator() {
   };
 
   return (
-    <div className="flex h-screen w-full bg-neutral-100 font-sans overflow-hidden">
+    <div className="flex h-screen w-full bg-slate-950 font-sans text-slate-100 overflow-hidden">
       
       {/* LEFT PANEL - CONTROLS (40%) */}
-      <div className="w-full md:w-[45%] lg:w-[40%] flex flex-col bg-white border-r border-neutral-200 shadow-sm relative z-10">
+      <div className="w-full md:w-[45%] lg:w-[40%] flex flex-col bg-slate-900 border-r border-slate-800 shadow-sm relative z-10">
         
         {/* Header */}
-        <header className="flex-none p-5 pb-4 border-b border-neutral-100 flex items-center justify-between bg-white z-20">
+        <header className="flex-none p-5 pb-4 border-b border-slate-800 flex items-center justify-between bg-slate-900 z-20">
           <div className="flex items-center gap-2">
-            <div className="bg-slate-900 p-1.5 rounded-md">
-              <TerminalSquare className="w-5 h-5 text-white" />
+            <div className="bg-indigo-500/10 p-1.5 rounded-md border border-indigo-500/20">
+              <TerminalSquare className="w-5 h-5 text-indigo-400" />
             </div>
             <div>
-              <h1 className="text-lg font-semibold tracking-tight text-slate-900 leading-none">LayerOne</h1>
-              <p className="text-xs text-slate-500 mt-0.5">Prompt Operating System</p>
+              <h1 className="text-lg font-semibold tracking-tight text-white leading-none">LayerOne</h1>
+              <p className="text-xs text-slate-400 mt-0.5">Prompt Operating System</p>
             </div>
           </div>
           <div className="flex items-center gap-3">
             {leadId && (
               <button 
                 onClick={() => navigate('/admin')}
-                className="flex items-center gap-1 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-md text-xs font-medium transition-colors border border-slate-200"
+                className="flex items-center gap-1 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-md text-xs font-medium transition-colors border border-slate-700"
               >
                 <ArrowLeft className="w-3.5 h-3.5" /> Voltar
               </button>
             )}
             <button 
               onClick={resetForm}
-              className="text-xs font-medium text-slate-400 hover:text-slate-700 transition-colors"
+              className="text-xs font-medium text-slate-500 hover:text-white transition-colors"
             >
               Reset
             </button>
@@ -143,12 +141,12 @@ export default function PromptGenerator() {
         </header>
 
         {/* Scrollable Form Content */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-10 pb-32">
+        <div className="flex-1 overflow-y-auto p-6 space-y-10 pb-32 custom-scrollbar">
           
           <section>
             <div className="flex items-center gap-2 mb-4">
-              <Layout className="w-4 h-4 text-slate-500" />
-              <h2 className="text-sm font-semibold text-slate-800 uppercase tracking-wider">Business Context</h2>
+              <Layout className="w-4 h-4 text-slate-400" />
+              <h2 className="text-sm font-semibold text-white uppercase tracking-wider">Business Context</h2>
             </div>
             <div className="space-y-5">
               <InputForm data={data} updateData={updateData} />
@@ -156,22 +154,22 @@ export default function PromptGenerator() {
             </div>
           </section>
 
-          <hr className="border-neutral-100" />
+          <hr className="border-slate-800/60" />
 
           <section>
             <div className="flex items-center gap-2 mb-4">
-              <Layout className="w-4 h-4 text-slate-500" />
-              <h2 className="text-sm font-semibold text-slate-800 uppercase tracking-wider">Page Architecture</h2>
+              <Layout className="w-4 h-4 text-slate-400" />
+              <h2 className="text-sm font-semibold text-white uppercase tracking-wider">Page Architecture</h2>
             </div>
             <PageSelector data={data} updateData={updateData} />
           </section>
 
-          <hr className="border-neutral-100" />
+          <hr className="border-slate-800/60" />
 
           <section>
             <div className="flex items-center gap-2 mb-4">
-              <Settings className="w-4 h-4 text-slate-500" />
-              <h2 className="text-sm font-semibold text-slate-800 uppercase tracking-wider">Parameters & Design</h2>
+              <Settings className="w-4 h-4 text-slate-400" />
+              <h2 className="text-sm font-semibold text-white uppercase tracking-wider">Parameters & Design</h2>
             </div>
             <DesignSettings data={data} updateData={updateData} />
           </section>
@@ -179,15 +177,15 @@ export default function PromptGenerator() {
       </div>
 
       {/* RIGHT PANEL - PREVIEW (60%) */}
-      <div className="hidden md:flex flex-col w-[55%] lg:w-[60%] bg-neutral-50 h-full relative">
-        <header className="flex-none p-4 border-b border-neutral-200 bg-neutral-100/50 flex justify-between items-center backdrop-blur-sm z-10">
+      <div className="hidden md:flex flex-col w-[55%] lg:w-[60%] bg-slate-950 h-full relative">
+        <header className="flex-none p-4 border-b border-slate-800 bg-slate-900/50 flex justify-between items-center backdrop-blur-sm z-10">
           <div className="flex items-center gap-2">
-            <Code className="w-4 h-4 text-slate-600" />
-            <h2 className="text-sm font-medium text-slate-700">Prompt Output Engine</h2>
+            <Code className="w-4 h-4 text-slate-400" />
+            <h2 className="text-sm font-medium text-slate-300">Prompt Output Engine</h2>
           </div>
           <div className="flex items-center gap-3">
-            <label className="flex items-center gap-2 text-xs font-medium text-slate-600 cursor-pointer">
-              <div className={`w-8 h-4 rounded-full relative transition-colors ${liveUpdate ? 'bg-indigo-500' : 'bg-slate-300'}`}>
+            <label className="flex items-center gap-2 text-xs font-medium text-slate-400 cursor-pointer">
+              <div className={`w-8 h-4 rounded-full relative transition-colors ${liveUpdate ? 'bg-indigo-500' : 'bg-slate-700'}`}>
                 <input 
                   type="checkbox" 
                   className="sr-only" 
@@ -201,7 +199,9 @@ export default function PromptGenerator() {
           </div>
         </header>
 
-        <div className="flex-1 overflow-hidden p-6">
+        <div className="flex-1 overflow-hidden p-6 relative">
+             {/* Background ambient light */}
+          <div className="absolute top-[-20%] right-[-10%] w-[50%] h-[50%] bg-indigo-600/10 blur-[120px] rounded-full mix-blend-screen pointer-events-none" />
           <PromptPreview data={data} liveUpdate={liveUpdate} />
         </div>
       </div>
