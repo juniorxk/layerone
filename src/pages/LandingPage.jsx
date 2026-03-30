@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '../lib/supabase';
-import { ChevronRight, ChevronLeft, CheckCircle, ArrowRight } from 'lucide-react';
+import { ChevronRight, ChevronLeft, CheckCircle, ArrowRight, Layout } from 'lucide-react';
 
 const steps = [
   { id: 'intro', title: 'Intro' },
