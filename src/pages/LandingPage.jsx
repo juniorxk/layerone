@@ -17,12 +17,9 @@ export default function LandingPage() {
     additionalInfo: ''
   });
 
-  // Audio recording states
-  const [isRecording, setIsRecording] = useState(false);
-  const [audioBlob, setAudioBlob] = useState(null);
+  // Audio file states
+  const [audioFile, setAudioFile] = useState(null);
   const [audioUrlLocal, setAudioUrlLocal] = useState(null);
-  const mediaRecorderRef = useRef(null);
-  const streamRef = useRef(null);
 
   const updateForm = (field, value) => setFormData(prev => ({ ...prev, [field]: value }));
 
@@ -65,44 +62,16 @@ export default function LandingPage() {
   };
 
   // Audio Functions
-  const startRecording = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      streamRef.current = stream;
-      const mediaRecorder = new MediaRecorder(stream);
-      mediaRecorderRef.current = mediaRecorder;
-      
-      const chunks = [];
-      mediaRecorder.ondataavailable = (e) => {
-        if (e.data.size > 0) chunks.push(e.data);
-      };
-      
-      mediaRecorder.onstop = () => {
-        const blob = new Blob(chunks, { type: 'audio/webm' });
-        setAudioBlob(blob);
-        setAudioUrlLocal(URL.createObjectURL(blob));
-      };
-      
-      mediaRecorder.start();
-      setIsRecording(true);
-    } catch (err) {
-      console.error(err);
-      alert('Não foi possível acessar o microfone. Verifique as permissões do seu navegador.');
-    }
-  };
-
-  const stopRecording = () => {
-    if (mediaRecorderRef.current && isRecording) {
-      mediaRecorderRef.current.stop();
-      setIsRecording(false);
-      if (streamRef.current) {
-        streamRef.current.getTracks().forEach(track => track.stop());
-      }
+  const handleAudioUpload = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setAudioFile(file);
+      setAudioUrlLocal(URL.createObjectURL(file));
     }
   };
 
   const removeAudio = () => {
-    setAudioBlob(null);
+    setAudioFile(null);
     setAudioUrlLocal(null);
   };
 
@@ -116,9 +85,9 @@ export default function LandingPage() {
       let finalAudioUrl = null;
 
       // Upload Audio
-      if (audioBlob) {
-        const fileName = `audio_${Date.now()}.webm`;
-        const { data, error } = await supabase.storage.from('leads-media').upload(fileName, audioBlob);
+      if (audioFile) {
+        const fileName = `audio_${Date.now()}_${audioFile.name}`;
+        const { data, error } = await supabase.storage.from('leads-media').upload(fileName, audioFile);
         if (!error && data) {
           const { data: publicUrlData } = supabase.storage.from('leads-media').getPublicUrl(fileName);
           finalAudioUrl = publicUrlData.publicUrl;
@@ -246,39 +215,18 @@ export default function LandingPage() {
                   <p className="text-sm text-slate-400">Grave um áudio nos contando o que sua empresa faz, quem é seu público, e o que você espera dessa landing page.</p>
                   
                   <div className="bg-slate-950/50 border border-slate-800 rounded-2xl p-6 flex flex-col items-center justify-center text-center">
-                     {!audioBlob ? (
-                       <div className="space-y-4 w-full">
-                          {isRecording ? (
-                            <div className="flex flex-col items-center justify-center gap-4">
-                               <div className="flex items-center justify-center w-20 h-20 bg-red-500/10 rounded-full animate-pulse border-2 border-red-500/50">
-                                 <Mic className="w-8 h-8 text-red-500" />
-                               </div>
-                               <span className="text-red-400 font-medium">Gravando seu briefing...</span>
-                               <button 
-                                 type="button"
-                                 onClick={stopRecording}
-                                 className="mt-4 px-6 py-2.5 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-lg shadow-lg flex items-center gap-2 transition-colors"
-                               >
-                                 <Square className="w-4 h-4" /> Parar Gravação
-                               </button>
-                            </div>
-                          ) : (
-                            <div className="flex flex-col items-center justify-center gap-4">
-                               <button 
-                                 type="button"
-                                 onClick={startRecording}
-                                 className="flex items-center justify-center w-20 h-20 bg-indigo-500 hover:bg-indigo-400 rounded-full text-white shadow-xl hover:scale-105 transition-all"
-                               >
-                                 <Mic className="w-8 h-8" />
-                               </button>
-                               <span className="text-slate-300 font-medium">Toque para começar a falar</span>
-                            </div>
-                          )}
-                       </div>
+                     {!audioFile ? (
+                       <label className="flex flex-col items-center justify-center w-full h-32 px-4 transition bg-slate-950/50 border-2 border-slate-800 border-dashed rounded-xl appearance-none cursor-pointer hover:border-indigo-500/50 hover:bg-slate-900 focus:outline-none">
+                            <span className="flex flex-col items-center space-y-2 text-slate-400">
+                                <Mic className="w-6 h-6 text-indigo-400" />
+                                <span className="font-medium text-sm">Clique para enviar o áudio gravado (Ex: WhatsApp)</span>
+                            </span>
+                            <input type="file" accept="audio/*" className="hidden" onChange={handleAudioUpload} />
+                       </label>
                      ) : (
                        <div className="space-y-4 w-full flex flex-col items-center">
                           <div className="flex items-center gap-2 text-emerald-400 bg-emerald-500/10 px-4 py-2 rounded-full border border-emerald-500/20 font-medium text-sm">
-                             <Check className="w-4 h-4" /> Áudio salvo com sucesso!
+                             <Check className="w-4 h-4" /> Áudio anexado com sucesso!
                           </div>
                           
                           {audioUrlLocal && (
@@ -290,7 +238,7 @@ export default function LandingPage() {
                              onClick={removeAudio}
                              className="text-sm text-red-400 hover:text-red-300 font-medium mt-2"
                           >
-                             Apagar e gravar novamente
+                             Trocar o áudio
                           </button>
                        </div>
                      )}
